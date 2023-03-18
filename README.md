@@ -12,3 +12,10 @@
 
 **Project team (A-Z):**
 * Alen Smajic
+
+## Instructions
+1. Clone this repository
+
+    git clone https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer
+
+In order to run an experiment, you first need to define the experiment parameters via the config files.
