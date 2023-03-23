@@ -16,6 +16,14 @@
 ## Instructions
 1. Clone this repository
 
-    git clone https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer
+       git clone https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer
+       
+2. Create a virtual environment
+
+       python -m venv venv
+       
+2. Install the diffusers library
+
+       pip install diffusers["torch"]
 
 In order to run an experiment, you first need to define the experiment parameters via the config files.
