@@ -1,4 +1,4 @@
-# Stable-Diffusion-Latent-Space-Explorer (Winter 2022/2023)
+# Stable-Diffusion-Latent-Space-Explorer
 
 ## General Information
 <img align="right" width="300" height="" src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Logo-Goethe-University-Frankfurt-am-Main.svg">
