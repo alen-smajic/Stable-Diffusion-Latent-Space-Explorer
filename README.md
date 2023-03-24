@@ -67,15 +67,15 @@ Here the script ```run_sd_experiment.py``` expects an argument ```--exp_config``
 
 ## Tutorials
 ### 1. Single Inference
-In this tutorial we will use the ```single_inference.yaml``` configuration file for ```txt2img``` (you can find it [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/single_inference.yaml)). 
+In this tutorial we will use the ```single_inference.yaml``` configuration file for ```txt2img``` (you can find it [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/single_inference.yaml)). We will generate 5 images that adhere to a prompt describing an astronaut riding a horse on the moon.
 
 :information_source: You can find more information on schedulers [here](https://huggingface.co/docs/diffusers/using-diffusers/schedulers). Morover, if you are unfamiliar with any concept from the ```Model Configurations``` you can refer to the [diffusers documentation](https://huggingface.co/docs/diffusers/index).
 
 #### Prompt Configurations
 
-:keyboard: ```prompt```: *"A photograph of an astronaut riding a horse on the Moon."*, ```negative prompt```: *"black and white, blurry, painting, drawing"*
+:keyboard: ```prompt```: *"A photograph of an astronaut riding a horse on the moon."*, ```negative prompt```: *"black and white, blurry, painting, drawing"*
 
-#### Latent Noise & Image Configuration
+#### Latent Noise Configuration
 
 :seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 768, ```images per prompt```: 5
 
@@ -84,14 +84,15 @@ In this tutorial we will use the ```single_inference.yaml``` configuration file 
 
 You can find [here](https://huggingface.co/docs/diffusers/using-diffusers/reproducibility) more information on reproducibility.
 
+
 ### 2. Visualize Diffusion
-In this tutorial we will use the ```visualize_diffusion.yaml``` configuration file for ```img2img``` (you can find it [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/img2img/visualize_diffusion.yaml)).
+In this tutorial we will use the ```visualize_diffusion.yaml``` configuration file for ```img2img``` (you can find it [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/img2img/visualize_diffusion.yaml)). We will visualize each difusion step of Stable Diffusion's img2img model for the input image ```output-3_diffsteps-25.png``` from [1. Single Inference](#1-single-inference), guided by a new prompt, which describes an astronaut riding a donkey instead of a horse.
 
 #### Prompt Configurations
 
-:keyboard: ```prompt```: *"A photograph of an astronaut riding a donkey on the Moon."*, ```negative prompt```: *"black and white, blurry, painting, drawing"*
+:keyboard: ```prompt```: *"A photograph of an astronaut riding a donkey on the moon."*, ```negative prompt```: *"black and white, blurry, painting, drawing"*
 
-#### Latent Noise Configuration
+#### Latent Noise & Image Configuration
 
 :seedling: ```rand_seed```: 42, ```height```: 768, ```width```: 768, ```images per prompt```: 1
 
@@ -101,6 +102,7 @@ In this tutorial we will use the ```visualize_diffusion.yaml``` configuration fi
   <img src="resources/images_for_readme/img2img_visualize_diffusion.gif" alt="Image 1" width="43%">
   <img src="resources/images_for_readme/img2img_visualize_diffusion_grid.png" alt="Image 2" width="55%">
 </div>
+:information_source: Note that the strength parameter scales the specified amount of diffusion steps. That is the reason why the output folder only contains 20 images (for 20 diffusion steps) even though we specified 25 diffusion steps in the config file.
 
 ### 3. Interpolation
 ### 4. Diffevolution
