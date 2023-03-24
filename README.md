@@ -59,11 +59,11 @@ Below is a list of experiments that are currently supported. Each entry is linke
 4. [Diffevolution](#4-diffevolution)
 5. [Random Walk](#5-random-walk)
 
-In order to run an experiment, you first need to define the experiment parameters using one of the configuration files. Once this is done, you can run an experiments by calling the following script:
+In order to run an experiment, you first need to define the experiment parameters using one of the configuration files. Once this is done, you can run an experiment by calling the following script:
 
         python --exp_config ./configs/experiments/{path to your config} run_sd_experiment.py
         
-Here the script ```run_sd_experiment.py``` expects an argument ```--exp_config```, which is the path to a experiment configuration file (e.g. ```./configs/experiments/txt2img/single_inference.yaml```)
+The script ```run_sd_experiment.py``` expects an argument ```--exp_config```, which is the path to an experiment configuration file (e.g. ```./configs/experiments/txt2img/single_inference.yaml```)
 
 ## Tutorials
 ### 1. Single Inference
@@ -102,7 +102,7 @@ In this tutorial we will use the ```visualize_diffusion.yaml``` configuration fi
   <img src="resources/images_for_readme/img2img_visualize_diffusion.gif" alt="Image 1" width="43%">
   <img src="resources/images_for_readme/img2img_visualize_diffusion_grid.png" alt="Image 2" width="55%">
 </div>
-:information_source: Note that the strength parameter scales the specified amount of diffusion steps. That is the reason why the output folder only contains 20 images (for 20 diffusion steps) even though we specified 25 diffusion steps in the config file.
+:information_source: Note that the strength parameter scales the specified amount of diffusion steps. That is the reason why the output folder only contains 20 images (for 20 diffusion steps) even though we specified 25 diffusion steps in the config file. It starts the diffusion process from step 5.
 
 ### 3. Interpolation
 ### 4. Diffevolution
