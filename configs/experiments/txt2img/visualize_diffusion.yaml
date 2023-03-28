@@ -11,7 +11,7 @@ exp_identifier: visualize-diffusion
 
 # MODEL CONFIGURATIONS
 # Specifies the model configurations.
-model_id: D:/alens/Desktop/Stable-Diffusion-Latent-Space-Explorer/weights/stable-diffusion-2-1  # Name of the Stable Diffusion repository on HuggingFace (e.g. stabilityai/stable-diffusion-2-1) or the path to the cloned repository (e.g. /mypath/stable-diffusion-2-1).
+model_id: ./weights/stable-diffusion-2-1  # Name of the Stable Diffusion repository on HuggingFace (e.g. stabilityai/stable-diffusion-2-1) or the path to the cloned repository (e.g. /mypath/stable-diffusion-2-1).
 scheduler: DPMSolverMultistepScheduler  # Name of the scheduler algorithm.
 att_slicing: True  # Whether attention slicing should be used (reduces memory consumption during the diffusion process at the cost of speed).
 vae_slicing: True  # Whether VAE slicing should be used (reduces memory consumption during the decoding stage at the cost of speed).
@@ -24,14 +24,14 @@ guidance_scale: 9.5  # Guidance scale factor for classifier free guidance (highe
 
 # EXPERIMENT CONFIGURATIONS
 # Specifies the experiment configurations.
-output_path: D:/alens/Desktop/Stable-Diffusion-Latent-Space-Explorer/experiments  # Path for storing the experiment results (a new folder will be placed at the specified location).
+output_path: ./experiments  # Path for storing the experiment results (a new folder will be placed at the specified location).
 gif_frame_dur: 200  # Specifies the frame duration in milliseconds for the produced gifs.
 # PROMPT CONFIGURATION
 prompt: A photograph of an astronaut riding a horse on the moon.|black and white, blurry, painting, drawing  # Input prompt where the positive part is separated from the negative part by a vertical line "|" without any whitespace in between.
-load_prompt_embeds: D:/alens/Desktop/Stable-Diffusion-Latent-Space-Explorer/experiments/2023-03-27_18-43-02_txt2img_single-inference/output-3_diffstep-25.pt  # Path to a local file containing the prompt embeddings. Caution the parameter "prompt" does not apply, if a pre-generated prompt embedding is loaded from a file.
+load_prompt_embeds: ./experiments/2023-03-27_18-43-02_txt2img_single-inference/embeddings/output-3_diffstep-25.pt  # Path to a local file containing the prompt embeddings. Caution the parameter "prompt" does not apply, if a pre-generated prompt embedding is loaded from a file.
 # LATENT NOISE CONFIGURATION
 rand_seed: 0  # Random seed for sampling reproducible latent noise.
 height: 768  # Image height of the desired VAE output (used for computing the latent noise height).
 width: 768  # Image width of the desired VAE output (used for computing the latent noise width).
 images_per_prompt: 1  # Amount of images to generate per prompt (specifies the batch dimension of the latent noise).
-load_latent_noise: D:/alens/Desktop/Stable-Diffusion-Latent-Space-Explorer/experiments/2023-03-27_18-43-02_txt2img_single-inference/output-3_diffstep-25.pt  # Path to a local file containing the latent noise tensor. Caution the parameters "rand_seed", "height", "width" and "images_per_prompt" do not apply, if a pre-generated latent noise tensor is loaded from a file.
+load_latent_noise: ./experiments/2023-03-27_18-43-02_txt2img_single-inference/embeddings/output-3_diffstep-25.pt  # Path to a local file containing the latent noise tensor. Caution the parameters "rand_seed", "height", "width" and "images_per_prompt" do not apply, if a pre-generated latent noise tensor is loaded from a file.
