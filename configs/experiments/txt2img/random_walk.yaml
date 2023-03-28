@@ -6,7 +6,7 @@
 # Specifies the model and experiment identifiers.
 # DO NOT CHANGE THESE!
 model_identifier: txt2img
-exp_identifier: single-inference
+exp_identifier: random-walk
 
 
 # MODEL CONFIGURATIONS
@@ -25,12 +25,13 @@ guidance_scale: 9.5  # Guidance scale factor for classifier free guidance (highe
 # Specifies the experiment configurations.
 output_path: /data/alen_smajic/FP_KI_Stable_Diffusion/experiments  # Path for storing the experiment results (a new folder will be placed at the specified location).
 gif_frame_dur: 200  # Specifies the frame duration in milliseconds for the produced gifs.
-
-num_steps: 10
-step_size: 0.01
-
+prompt_rand_walk: True  # Whether to perform a random walk within the latent space of the text encoder.
+noise_rand_walk: False  # Whether to perform a random walk within the latent space of the VAE.
+walk_steps: 50  # Specifies the amount of steps for the random walk.
+step_size: 0.005  # Specifies the step size for each step of the random walk.
+walk_directions: 5  # Specifies the amount of latent space directions to be explored by the random walk.
 # PROMPT CONFIGURATION
-prompt: A Hyperrealistic photograph of a futuristic city with tall skyscrapers and the sky made out galaxies, lens flares, cinematic, hdri, matte painting, concept art, celestial, soft render, highly detailed, cgsociety, octane render, trending on artstation, HQ, 4k, 8k.|black and white, blurry, painting, drawing, low resolution, watermark  # Input prompt where the positive part is separated from the negative part by a vertical line "|" without any whitespace in between.
+prompt: An astronaut riding a horse on the moon.|black and white, blurry, painting, drawing, low resolution, watermark  # Input prompt where the positive part is separated from the negative part by a vertical line "|" without any whitespace in between.
 load_prompt_embeds: None  # Path to a local file containing the prompt embeddings. Caution the parameter "prompt" does not apply, if a pre-generated prompt embedding is loaded from a file.
 # LATENT NOISE CONFIGURATION
 rand_seed: 0  # Random seed for sampling reproducible latent noise.

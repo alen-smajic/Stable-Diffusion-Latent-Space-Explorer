@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import yaml
 
@@ -45,9 +46,11 @@ def run_sd_experiment(cfg_path, exp_cfg, sd_model):
 
 def main():
     parser = argparse.ArgumentParser(description="Run a Stable Diffusion experiment by licking to a configuration file.")
-    parser.add_argument('--exp_config', type=str, default ="./configs/experiments/txt2img/diffevolution.yaml",
+    parser.add_argument('--exp_config', type=str, default="./configs/experiments/txt2img/interpolation.yaml",
                         help='Path to the experiment configuration file.')
     args = parser.parse_args()
+
+    assert os.path.isfile(args.exp_config)
 
     with open(args.exp_config) as yaml_file:
         exp_cfg = yaml.load(yaml_file, Loader=yaml.FullLoader)

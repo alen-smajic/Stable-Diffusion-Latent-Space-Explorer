@@ -253,7 +253,6 @@ def run_interpolation(cfg_path, exp_cfg, sd_model):
         log_txt += " and latent noise" if log_txt else "latent noise"
         latent_noise = []
         for i in range(len(exp_cfg["inter_noises"]) - 1):
-            sd_model.rand_seed = exp_cfg["inter_noises"][i]
             noise_1 = sd_model.load_noise(
                 load_latent_noise=exp_cfg["inter_noises"][i],
                 height=exp_cfg["height"],
@@ -261,13 +260,12 @@ def run_interpolation(cfg_path, exp_cfg, sd_model):
                 images_per_prompt=1,
                 rand_seed=exp_cfg["inter_noises"][i]
             )
-            sd_model.rand_seed = exp_cfg["inter_noises"][i + 1]
             noise_2 = sd_model.load_noise(
                 load_latent_noise=exp_cfg["inter_noises"][i + 1],
                 height=exp_cfg["height"],
                 width=exp_cfg["width"],
                 images_per_prompt=1,
-                rand_seed=exp_cfg["inter_noises"][i]
+                rand_seed=exp_cfg["inter_noises"][i + 1]
             )
             latent_noise += utils.interpolate(
                 x=noise_1,
@@ -324,7 +322,7 @@ def run_interpolation(cfg_path, exp_cfg, sd_model):
                 latent_noise=latent_noise[int_idx * noise_stepper].cpu(),
                 image_embed=image_embeds[batch_idx][-1].cpu(),
                 image=images[batch_idx][-1],
-                file_name=f"output-{batch_idx}_lstitms-{lst_itm},{lst_itm + 1}_step-{step}"
+                file_name=f"interpolation_lstitms-{lst_itm},{lst_itm + 1}_step-{step}"
             )
             results[batch_idx].append(images[batch_idx][-1])
 
@@ -430,10 +428,3 @@ def run_diffevolution(cfg_path, exp_cfg, sd_model):
             step += 1
 
     print("Experiment finished")
-
-
-def a():
-    image_size = (512, 512)
-    zoom_speed = 128
-    num_filler_frames = 64
-    resize_factor = 1

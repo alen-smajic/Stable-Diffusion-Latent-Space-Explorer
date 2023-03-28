@@ -24,6 +24,7 @@ class StableDiffusion:
             model_cfg["scheduler"] if "scheduler" in model_cfg else "DPMSolverMultistepScheduler",
             model_cfg["att_slicing"] if "att_slicing" in model_cfg else True,
             model_cfg["vae_slicing"] if "vae_slicing" in model_cfg else True,
+            model_cfg["vae_tiling"] if "vae_tiling" in model_cfg else False,
             model_cfg["enable_xformers"] if "enable_xformers" in model_cfg else False
         )
         self.diffusion_steps = model_cfg["diffusion_steps"] if "diffusion_steps" in model_cfg else 50
@@ -43,7 +44,7 @@ class StableDiffusion:
         self.strength = model_cfg["strength"] if "strength" in model_cfg else None
         self.mask = model_cfg["mask"] if "mask" in model_cfg else None
 
-    def _load_sd_pipeline(self, model_id, scheduler_name, att_slicing, vae_slicing, enable_xformers):
+    def _load_sd_pipeline(self, model_id, scheduler_name, att_slicing, vae_slicing, vae_tiling, enable_xformers):
         """
         Loads a Stable Diffusion model instance from the diffusers library with the correct configurations.
 
@@ -54,6 +55,8 @@ class StableDiffusion:
         consumption during the diffusion process at the cost of speed.
         :param vae_slicing: Boolean value specifying whether VAE slicing should be used. Reduces memory consumption
         during the encoding/decoding stage at the cost of speed.
+        :param vae_tiling: Boolean value specifying whether VAE tiling should be used. Reduces memory consumption during
+        the encoding/decoding stage at the cost of speed.
         :param enable_xformers: Whether to enable xFormers for optimized performance in the attention blocks (requires
         the xformers package).
         :return: Stable Diffusion model instance from the diffusers library.
@@ -91,6 +94,8 @@ class StableDiffusion:
             sd_pipeline.enable_attention_slicing()
         if vae_slicing:
             sd_pipeline.vae.enable_slicing()
+        if vae_tiling:
+            sd_pipeline.vae.enable_tiling()
         if enable_xformers:
             sd_pipeline.enable_xformers_memory_efficient_attention()
 
@@ -141,7 +146,7 @@ class StableDiffusion:
 
         :param height: Image height of the desired VAE output (used for computing the latent noise height).
         :param width: Image width of the desired VAE output (used for computing the latent noise width).
-        :param images_per_prompt: Amount of images to generate per prompt (specifies the batch dimension of the latent
+        :param images_per_prompt: Amount of images to generate per prompt (specifies the batch size of the latent
         noise).
         :param rand_seed: Random seed for sampling reproducible random noise.
         :return: A torch tensor of the latent noise.
@@ -164,7 +169,7 @@ class StableDiffusion:
 
         :param prompt: Input prompt where the positive part is separated from the negative part by a vertical line "|"
         without any whitespace in between.
-        :return: Encoded negative and positive prompt embeddings stacked into a single tensor (batch dimension 2).
+        :return: Encoded negative and positive prompt embeddings stacked into a single tensor (batch size is 2).
         """
         pos_prompt = prompt.split("|")[0]
         neg_prompt = prompt.split("|")[1]
@@ -212,7 +217,7 @@ class StableDiffusion:
         :param load_latent_noise: Path to a local file containing the latent noise tensor.
         :param height: Image height of the desired VAE output (used for computing the latent noise height).
         :param width: Image width of the desired VAE output (used for computing the latent noise width).
-        :param images_per_prompt: Amount of images to generate per prompt (specifies the batch dimension of the latent
+        :param images_per_prompt: Amount of images to generate per prompt (specifies the batch size of the latent
         noise).
         :param rand_seed: Random seed for sampling reproducible random noise.
         :return: A torch tensor of the latent noise.
@@ -236,7 +241,7 @@ class StableDiffusion:
         :param load_prompt_embeds: Path to a local file containing the prompt embeddings.
         :param prompt: Input prompt where the positive part is separated from the negative part by a vertical line "|"
         without any whitespace in between.
-        :return: Encoded negative and positive prompt embeddings stacked into a single tensor (batch dimension 2).
+        :return: Encoded negative and positive prompt embeddings stacked into a single tensor (batch size is 2).
         """
         if os.path.isfile(load_prompt_embeds):
             print(f"Loading prompt embeddings from {load_prompt_embeds}")
@@ -299,8 +304,8 @@ class Txt2Img(StableDiffusion):
         img_embeds = [[] for _ in range(len(results))]  # Placeholder for all processed image embeddings
         images = [[] for _ in range(len(results))]  # Placeholder for all decoded image embeddings
         for batch_idx in range(len(results)):
-            for diffusion_step in range(len(results[i])):
-                if not visualize_diffusion and diffusion_step != len(results[i])-1:
+            for diffusion_step in range(len(results[batch_idx])):
+                if not visualize_diffusion and diffusion_step != len(results[batch_idx])-1:
                     # Skip all diffusion steps except the last one
                     continue
                 img_embeds[batch_idx].append(
@@ -330,7 +335,7 @@ class Img2Img(StableDiffusion):
         """
         # Sets the diffusion steps
         self.sd_pipeline.scheduler.set_timesteps(self.diffusion_steps, device=self.device)
-        # Uses the strength to scale the amount of diffusion steps and the starting point
+        # Uses the strength to scale the amount of diffusion steps and the starting step
         timesteps, num_diffusion_steps = self.sd_pipeline.get_timesteps(self.diffusion_steps, self.strength, self.device)
         latent_timestep = timesteps[:1].repeat(self.images_per_prompt)
 
@@ -377,12 +382,12 @@ class Img2Img(StableDiffusion):
         img_embeds = [[] for _ in range(len(results))]  # Placeholder for all processed image embeddings
         images = [[] for _ in range(len(results))]  # Placeholder for all decoded image embeddings
         for batch_idx in range(len(results)):
-            for diffustion_step in range(len(results[i])):
-                if not visualize_diffusion and diffustion_step != len(results[i])-1:
+            for diffusion_step in range(len(results[batch_idx])):
+                if not visualize_diffusion and diffusion_step != len(results[batch_idx])-1:
                     # Skip all diffusion steps except the last one
                     continue
                 img_embeds[batch_idx].append(
-                    results[batch_idx][diffustion_step] / self.sd_pipeline.vae.config.scaling_factor
+                    results[batch_idx][diffusion_step] / self.sd_pipeline.vae.config.scaling_factor
                 )
                 images[batch_idx].append(self.decode_images(img_embeds[batch_idx][-1])[0])
 
@@ -462,12 +467,12 @@ class Inpaint(StableDiffusion):
         img_embeds = [[] for _ in range(len(results))]  # Placeholder for all processed image embeddings
         images = [[] for _ in range(len(results))]  # Placeholder for all decoded image embeddings
         for batch_idx in range(len(results)):
-            for diffustion_step in range(len(results[i])):
-                if not visualize_diffusion and diffustion_step != len(results[i])-1:
+            for diffusion_step in range(len(results[batch_idx])):
+                if not visualize_diffusion and diffusion_step != len(results[batch_idx])-1:
                     # Skip all diffusion steps except the last one
                     continue
                 img_embeds[batch_idx].append(
-                    results[batch_idx][diffustion_step] / self.sd_pipeline.vae.config.scaling_factor
+                    results[batch_idx][diffusion_step] / self.sd_pipeline.vae.config.scaling_factor
                 )
                 images[batch_idx].append(self.decode_images(img_embeds[batch_idx][-1])[0])
 
