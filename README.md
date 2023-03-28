@@ -77,13 +77,14 @@ Each experiment run will produce a results folder with a unique name consisting 
   
  ### Some general tips
  :information_source: You can find more information on schedulers [here](https://huggingface.co/docs/diffusers/using-diffusers/schedulers). Morover, if you are unfamiliar with any concept from the ```Model Configurations``` you can refer to the [diffusers documentation](https://huggingface.co/docs/diffusers/index)., diffusion steps, guidance scale
+ :information_source: Note that the strength parameter scales the specified amount of diffusion steps. That is the reason why the output folder only contains 20 images (for 20 diffusion steps) even though we specified 25 diffusion steps in the config file. It starts the diffusion process from step 5.
 
 
 ## Tutorials
 ### 1. Single Inference
 In this tutorial we will use the ```single_inference.yaml``` configuration file for ```txt2img```, ```img2img``` and ```inpaint```. 
 
-We will start by configuring ```txt2img``` to generate 5 images that adhere to a prompt describing an astronaut riding a horse on the moon (you can find the configuration [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/single_inference.yaml)).
+We will start by configuring ```txt2img``` to generate 4 images that adhere to a prompt describing an astronaut riding a horse on the moon (you can find the configuration [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/single_inference.yaml)).
 
 
 #### Prompt Configurations
@@ -92,14 +93,14 @@ We will start by configuring ```txt2img``` to generate 5 images that adhere to a
 
 #### Latent Noise Configuration
 
-:seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 768, ```images per prompt```: 5
+:seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 768, ```images per prompt```: 4
 
 <img width="" height="" src="resources/images_for_readme/txt2img_single_inference.png">
 :information_source: Note that your results may differ from the ones presented here, even with identical configurations and random seeds. 
 
 You can find [here](https://huggingface.co/docs/diffusers/using-diffusers/reproducibility) more information on reproducibility.
 
-Next, we will configure ```img2img``` to generate 5 variations of the image ```output-3_diffstep-25.png``` from the previous experiment. The variations will
+Next, we will configure ```img2img``` to generate 4 variations of the image ```output-3_diffstep-25.png``` from the previous experiment. The variations will
 depict an astronaut riding a donkey on the moon (you can find the configuration [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/img2img/single_inference.yaml)).
 
 #### Prompt Configurations
@@ -108,7 +109,7 @@ depict an astronaut riding a donkey on the moon (you can find the configuration 
 
 #### Latent Noise & Image Configuration
 
-:seedling: ```rand_seed```: 42, ```height```: 768, ```width```: 768, ```images per prompt```: 5
+:seedling: ```rand_seed```: 42, ```height```: 768, ```width```: 768, ```images per prompt```: 4
 
 :framed_picture: ```image```: *".experiments/2023-03-27_18-43-02_txt2img_single-inference/images/output-3_diffstep-25.png"* 
 
@@ -116,7 +117,7 @@ depict an astronaut riding a donkey on the moon (you can find the configuration 
 
 <img width="" height="" src="resources/images_for_readme/img2img_single_inference.png">
 
-Finally, we use ```inpaint``` to generate 5 variations of the image ```output-0_diffstep-25.png``` from the previous experiment, which depicts a donkey instead of a horse. The final 5 variations will be replacing the astronaut with a humanoid roboter using a [manually generated mask](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/astronaut_mask.png) (you can find the configuration [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/single_inference.yaml)).
+Finally, we use ```inpaint``` to generate 4 variations of the image ```output-0_diffstep-25.png``` from the previous experiment, which depicts a donkey instead of a horse. The final 4 variations will be replacing the astronaut with a humanoid roboter using a [manually generated mask](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/astronaut_mask.png) (you can find the configuration [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/single_inference.yaml)).
 
 #### Prompt Configurations
 
@@ -124,7 +125,7 @@ Finally, we use ```inpaint``` to generate 5 variations of the image ```output-0_
 
 #### Latent Noise & Image Configuration
 
-:seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 768, ```images per prompt```: 5
+:seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 768, ```images per prompt```: 4
 
 :framed_picture: ```image```: *".experiments/2023-03-27_21-40-35_img2img_single-inference/images/output-0_diffstep-25.png"* 
 
@@ -133,23 +134,27 @@ Finally, we use ```inpaint``` to generate 5 variations of the image ```output-0_
 <img width="" height="" src="resources/images_for_readme/inpaint_single_inference.png">
 
 ### 2. Visualize Diffusion
-In this tutorial we will use the ```visualize_diffusion.yaml``` configuration file for ```img2img``` (you can find it [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/img2img/visualize_diffusion.yaml)). We will visualize each difusion step of Stable Diffusion's img2img model for the input image ```output-3_diffsteps-25.png``` from [1. Single Inference](#1-single-inference), guided by a new prompt, which describes an astronaut riding a donkey instead of a horse.
+In this tutorial we will use the [```visualize_diffusion.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/visualize_diffusion.yaml) configuration file for ```inpaint```. This experiment decodes the latent noise tensor after each diffusion step and creates a visualization of the whole diffusion process.
+
+We can easily reuse textual embeddings and latent noise tensors to recreate images that were created by a previous experiment run. 
 
 #### Prompt Configurations
 
-:keyboard: ```prompt```: *"A photograph of an astronaut riding a donkey on the moon."*, ```negative prompt```: *"black and white, blurry, painting, drawing"*
+:keyboard: :floppy_disk: ```load_prompt_embeds```: *"./experiments/2023-03-27_21-46-30_inpaint_single-inference/embeddings/output-1_diffstep-25.pt"*
 
 #### Latent Noise & Image Configuration
 
-:seedling: ```rand_seed```: 42, ```height```: 768, ```width```: 768, ```images per prompt```: 1
+:seedling: :floppy_disk: ```load_latent_noise```: *"./experiments/2023-03-27_21-46-30_inpaint_single-inference/embeddings/output-1_diffstep-25.pt"*
 
-:framed_picture: ```image```: {Path to the images folder generated by experiment [1. Single Inference](#1-single-inference)}/output-3_diffstep-25.png, ```strength```: 0.8
+:framed_picture: ```image```: *".experiments/2023-03-27_21-40-35_img2img_single-inference/images/output-0_diffstep-25.png"* 
+
+:black_square_button: ```mask```: *".resources/astronaut_mask.png"*
 
 <div style="display: flex;">
-  <img src="resources/images_for_readme/img2img_visualize_diffusion.gif" alt="Image 1" width="43%">
-  <img src="resources/images_for_readme/img2img_visualize_diffusion_grid.png" alt="Image 2" width="55%">
+  <img src="resources/images_for_readme/inpaint_visualize_diffusion.gif" alt="Image 1" width="47%">
+  <img src="resources/images_for_readme/inpaint_visualize_diffusion_grid.png" alt="Image 2" width="52%">
 </div>
-:information_source: Note that the strength parameter scales the specified amount of diffusion steps. That is the reason why the output folder only contains 20 images (for 20 diffusion steps) even though we specified 25 diffusion steps in the config file. It starts the diffusion process from step 5.
+
 
 ### 3. Interpolation
 ### 4. Diffevolution
