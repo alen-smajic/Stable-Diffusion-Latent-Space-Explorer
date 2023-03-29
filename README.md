@@ -34,6 +34,14 @@
 
        pip install xformers
        
+### Tested Versions
+If you face any issues, you should try to match the version of the installed packages to these versions:
+
+- torch 2.0.0
+- cuda 11.8
+- diffusers 0.14.0
+- xformers 0.0.16
+       
 ### Model Weights
 You can download the model weights using [git-lfs](https://git-lfs.com/).
 
@@ -44,11 +52,9 @@ The command above will create a local folder called ```./stable-diffusion-2-1```
 
 The code in this repo was tested on: 
 
-:heavy_check_mark: [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1)
+:heavy_check_mark: [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1) (native resolution 768x768)
 
-:heavy_check_mark: [Stable Diffusion 2.1 base](https://huggingface.co/stabilityai/stable-diffusion-2-1-base)
-
-:heavy_check_mark: [Stable Diffusion 2 Inpainting](https://huggingface.co/stabilityai/stable-diffusion-2-inpainting)
+:heavy_check_mark: [Stable Diffusion 2 Inpainting](https://huggingface.co/stabilityai/stable-diffusion-2-inpainting) (native resolution 512x512)
 
 
 ## Instructions
@@ -64,7 +70,7 @@ Below is a list of experiments that are currently supported. Each entry is linke
 ### How to run an experiment
 In order to run an experiment, you first need to define the experiment parameters using one of the experiment configuration files. Once this is done, you can run an experiment by calling the following script:
 
-        python --exp_config ./configs/experiments/{path to your config} run_sd_experiment.py
+        python run_sd_experiment.py --exp_config ./configs/experiments/{path to your config} 
         
 The script ```run_sd_experiment.py``` expects an argument ```--exp_config```, which is the path to an experiment configuration file (e.g. ```./configs/experiments/txt2img/single_inference.yaml```). 
 
@@ -81,11 +87,22 @@ Each experiment run will produce a results folder with a unique name consisting 
 
 
 ## Tutorials
+
+All experiment runs in this tutorial have the same model configuration. [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1) was used for ```txt2img``` and ```img2img``` experiments. For ```inpaint``` was [Stable Diffusion 2 Inpainting](https://huggingface.co/stabilityai/stable-diffusion-2-inpainting) used. The most relevant parameters from the model configuration are listed below.
+
+#### Model Configurations
+
+:page_facing_up: 	```scheduler```: DPMSolverMultistepScheduler
+
+:arrows_counterclockwise: ```diffusion steps```: 25
+
+:control_knobs: ```guidance_scale```: 9.5
+
+
 ### 1. Single Inference
-In this tutorial we will use the ```single_inference.yaml``` configuration file for ```txt2img```, ```img2img``` and ```inpaint```. 
+In this tutorial we will use the ```single_inference.yaml``` configuration files for ```txt2img```, ```img2img``` and ```inpaint```. 
 
 We will start by configuring ```txt2img``` to generate 4 images that adhere to a prompt describing an astronaut riding a horse on the moon (you can find the configuration [here](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/single_inference.yaml)).
-
 
 #### Prompt Configurations
 
@@ -155,6 +172,7 @@ We can easily reuse textual embeddings and latent noise tensors to recreate imag
   <img src="resources/images_for_readme/inpaint_visualize_diffusion_grid.png" alt="Image 2" width="52%">
 </div>
 
+:information_source: The results of this experiment are not in this repository due to its size.
 
 ### 3. Interpolation
 ### 4. Diffevolution
