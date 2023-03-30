@@ -63,9 +63,9 @@ Below is a list of experiments that are currently supported. Each entry is linke
 ### Experiments
 1. [Single Inference](#1-single-inference)
 2. [Visualize Diffusion](#2-visualize-diffusion)
-3. [Interpolation](#3-interpolation)
-4. [Diffevolution](#4-diffevolution)
-5. [Random Walk](#5-random-walk)
+3. [Random Walk](#3-random-walk)
+4. [Interpolation](#4-interpolation)
+5. [Diffevolution](#5-diffevolution)
 
 ### How to run an experiment
 In order to run an experiment, you first need to define the experiment parameters using one of the experiment configuration files. Once this is done, you can run an experiment by calling the following script:
@@ -173,11 +173,31 @@ We can easily reuse textual embeddings and latent noise tensors to recreate imag
   <img src="resources/images_for_readme/inpaint_visualize_diffusion_grid.png" alt="Image 2" width="52%">
 </div>
 
-:information_source: The results of this experiment are not in this repository due to its size.
+:information_source: The results of this experiment are not in this repository due to their size.
 
-### 3. Interpolation
-### 4. Diffevolution
-### 5. Random Walk
+### 3. Random Walk
+In this tutorial we will use the [```random_walk.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/random_walk.yaml) configuration file for ```txt2img```. In this experiment, we will create a visualization by performing a random walk within both the textual and image latent space. 
+
+Here we will define a larger and non-square image resolution to demonstrate Stable Diffusion's adjustable image size.
+
+#### Experiment Configurations
+
+:ballot_box_with_check: ```prompt_rand_walk```: True, ```noise_rand_walk```: True
+
+:test_tube: ```walk_direction```: 3, ```walk_steps```: 50, ```step_size```: 0.0095
+
+#### Prompt Configurations
+
+:keyboard: ```prompt```: *"A beautiful painting of a pirate ship."*, ```negative prompt```: *"low quality, blurry, low resolution"*
+
+#### Latent Noise & Image Configuration
+
+:seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 1200, ```images per prompt```: 4
+
 https://user-images.githubusercontent.com/63591221/228901991-aa6ccd79-c82b-4956-8b5e-ca1234a667ac.mp4
 
+:information_source: The results of this experiment are not in this repository due to their size.
+
+### 4. Diffevolution
+### 5. Interpolation
 
