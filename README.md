@@ -178,3 +178,6 @@ We can easily reuse textual embeddings and latent noise tensors to recreate imag
 ### 3. Interpolation
 ### 4. Diffevolution
 ### 5. Random Walk
+https://user-images.githubusercontent.com/63591221/228901991-aa6ccd79-c82b-4956-8b5e-ca1234a667ac.mp4
+
+
