@@ -176,21 +176,21 @@ We can easily reuse textual embeddings and latent noise tensors to recreate imag
 :information_source: The results of this experiment are not in this repository due to their size.
 
 ### 3. Random Walk
-In this tutorial we will use the [```random_walk.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/random_walk.yaml) configuration file for ```txt2img```. In this experiment, we will create a visualization by performing a random walk within both the textual and image latent space. 
+In this tutorial we will use the [```random_walk.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/random_walk.yaml) configuration file for ```txt2img```. We will create a visualization by performing a random walk within both the textual and image latent space starting from an initial image. 
 
-Here we will define a larger and non-square image resolution to demonstrate Stable Diffusion's adjustable image size.
+To make our visualization more appealing, we will extend the image width from 768 to 1200. 
 
 #### Experiment Configurations
 
 :ballot_box_with_check: ```prompt_rand_walk```: True, ```noise_rand_walk```: True
 
-:test_tube: ```walk_direction```: 3, ```walk_steps```: 50, ```step_size```: 0.0095
+:test_tube: ```walk_directions```: 3, ```walk_steps```: 50, ```step_size```: 0.0095
 
 #### Prompt Configurations
 
 :keyboard: ```prompt```: *"A beautiful painting of a pirate ship."*, ```negative prompt```: *"low quality, blurry, low resolution"*
 
-#### Latent Noise & Image Configuration
+#### Latent Noise Configuration
 
 :seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 1200, ```images per prompt```: 4
 
@@ -198,6 +198,34 @@ https://user-images.githubusercontent.com/63591221/228901991-aa6ccd79-c82b-4956-
 
 :information_source: The results of this experiment are not in this repository due to their size.
 
-### 4. Diffevolution
-### 5. Interpolation
+### 4. Interpolation
+In this tutorial we will use the [```interpolation.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/interpolation.yaml) configuration file for ```txt2img```. We will create a visualization by interpolating text embeddings and latent noise tensors, which are loaded from a pre-defined list. The list contains 8 prompts and 8 latent noise entries. Besides listing raw text prompts and random seeds, one can directly reference an embeddings file from a previous expeeriment. When doing so for latent noise tensors, it is important to take care that the image resolution matches for all items of the inter_noises parameter (random seed entries will use the heigh and width parameters, which are defined below).
 
+As the second entry of the ```inter_prompts``` and ```inter_noises``` lists, we will link to the embeddings of the initial image from the previous tutorial depicting a painting of a pirate ship. Since the loaded latent noise embeddings are configured for 700x1200 image resolution, we will have to set this as the base resolution for the experiment.
+
+#### Experiment Configurations
+
+:test_tube: ```interpolation_steps```: 30, ```interpolation_method```: slerp
+
+#### Prompt Configurations
+
+:keyboard: ```inter_prompts```: 
+ - *"A photograph of a dog with a funny hat"*
+ - *"./experiments/2023-03-30_19-53-28_txt2img_random-walk/embeddings/output-0_direction-0_randwalkstep-start.pt"*
+ - *"A digital illustration of a steampunk library with clockwork machines, 4k, detailed, trending on artstation, fantasy vivid colors"*
+ - A beautiful castle beside a waterfall in the woods, by Josef Thoma, matte painting, trending on artstation HQ|
+ - A digital illustration of a medieval town, 4k, detailed, trending on artstation, fantasy|low quality, low detail
+ - A Hyperrealistic photograph of ancient Paris architectural ruins in a flooded apocalypse landscape of dead skyscrapers, eiffel tower, lens flares, 
+ - A Hyperrealistic photograph of a landscape with ancient human ruins, lens flares,
+ - A Hyperrealistic photograph of a futuristic city with cyberpunk skyscrapers, lens flares, 
+
+
+#### Latent Noise Configurations
+
+:seedling: ```inter_noises```: [2, *"./experiments/2023-03-30_19-53-28_txt2img_random-walk/embeddings/output-0_direction-0_randwalkstep-start.pt"*, 1, 0, 0, 2, 1, 0], ```height```: 768, ```width```: 1200
+ 
+https://user-images.githubusercontent.com/63591221/229148028-0a951529-4555-4750-a649-d3dda2b04a40.mp4
+
+:information_source: The results of this experiment are not in this repository due to their size.
+
+### 5. Diffevolution
