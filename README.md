@@ -54,8 +54,9 @@ The code in this repo was tested on:
 
 :heavy_check_mark: [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1) (native resolution 768x768)
 
-:heavy_check_mark: [Stable Diffusion 2 Inpainting](https://huggingface.co/stabilityai/stable-diffusion-2-inpainting) (native resolution 512x512)
+:heavy_check_mark: [Stable Diffusion 2.1 Base](https://huggingface.co/stabilityai/stable-diffusion-2-1-base) (native resolution 512x512)
 
+:heavy_check_mark: [Stable Diffusion 2 Inpainting](https://huggingface.co/stabilityai/stable-diffusion-2-inpainting) (native resolution 512x512)
 
 ## Instructions
 Below is a list of experiments that are currently supported. Each entry is linked to a tutorial of the specified experiment.
@@ -87,10 +88,8 @@ Each experiment run will produce a results folder with a unique name consisting 
  
 :information_source: As of Stable Diffusion 2.0, you can also specify a negative prompt in addition to the simple (positive) prompt. This negative prompt can be used to eliminate unwanted details like blurry images for example.
 
-:information_source: [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1) was fine-tuned on images of 768x768 pixels, while [Stable Diffusion 2 Inpainting](https://huggingface.co/stabilityai/stable-diffusion-2-inpainting) was trained on images of 512x512 pixels. You can define custom height and width values within the config file. It is recommended to use the native imaage resolution in one dimension, and a value larger thant that in the other one. Too high deviations from the native resolution will result in poor quality images.
+:information_source: [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1) was fine-tuned on images of 768x768 pixels, while [Stable Diffusion 2 Inpainting](https://huggingface.co/stabilityai/stable-diffusion-2-inpainting) was trained on images of 512x512 pixels. You can define custom height and width values within the config file. It is recommended to use the native image resolution in one dimension, and a value larger thant that in the other one. Too high deviations from the native resolution will result in poor quality images.
  
-
-
 
 ## Tutorials
 
@@ -138,7 +137,7 @@ depict an astronaut riding a donkey on the moon (you can find the configuration 
 
 :seedling: ```rand_seed```: 42, ```height```: 768, ```width```: 768, ```images per prompt```: 4
 
-:framed_picture: ```image```: *".experiments/2023-03-27_18-43-02_txt2img_single-inference/images/output-3_diffstep-25.png"* 
+:framed_picture: ```image```: *"./experiments/2023-03-27_18-43-02_txt2img_single-inference/images/output-3_diffstep-25.png"* 
 
 :mechanical_arm: ```strength```: 0.8
 
@@ -158,11 +157,11 @@ Finally, we use ```inpaint``` to generate 4 variations of the image ```output-0_
 
 :seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 768, ```images per prompt```: 4
 
-:framed_picture: ```image```: *".experiments/2023-03-27_21-40-35_img2img_single-inference/images/output-0_diffstep-25.png"* 
+:framed_picture: ```image```: *"./experiments/2023-03-27_21-40-35_img2img_single-inference/images/output-0_diffstep-25.png"* 
 
-:black_square_button: ```mask```: *".resources/astronaut_mask.png"*
+:black_square_button: ```mask```: *"./resources/astronaut_mask.png"*
 
-<img width="" height="" src="resources/images_for_readme/inpaint_single_inference.png">
+<img width="" height="" src="./resources/images_for_readme/inpaint_single_inference.png">
 
 ### 2. Visualize Diffusion
 In this tutorial we will use the [```visualize_diffusion.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/visualize_diffusion.yaml) configuration file for ```inpaint```. This experiment decodes the latent noise tensor after each diffusion step and creates a visualization of the whole diffusion process.
@@ -181,9 +180,9 @@ We can easily reuse textual embeddings and latent noise tensors to recreate imag
 
 :seedling: :floppy_disk: ```load_latent_noise```: *"./experiments/2023-03-27_21-46-30_inpaint_single-inference/embeddings/output-1_diffstep-25.pt"*
 
-:framed_picture: ```image```: *".experiments/2023-03-27_21-40-35_img2img_single-inference/images/output-0_diffstep-25.png"* 
+:framed_picture: ```image```: *"./experiments/2023-03-27_21-40-35_img2img_single-inference/images/output-0_diffstep-25.png"* 
 
-:black_square_button: ```mask```: *".resources/astronaut_mask.png"*
+:black_square_button: ```mask```: *"./resources/astronaut_mask.png"*
 
 <div style="display: flex;">
   <img src="resources/images_for_readme/inpaint_visualize_diffusion.gif" alt="Image 1" width="47%">
@@ -193,7 +192,7 @@ We can easily reuse textual embeddings and latent noise tensors to recreate imag
 :information_source: The results of this experiment are not in this repository due to their size.
 
 ### 3. Random Walk
-In this tutorial we will use the [```random_walk.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/random_walk.yaml) configuration file for ```txt2img```. We will create a visualization by performing a random walk within both the textual and image latent space starting from an initial image. 
+In this tutorial we will use the [```random_walk.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/random_walk.yaml) configuration file for ```txt2img```. We will create a visualization by performing a random walk within both the textual and image latent space starting from an initial image depicting a painting of a pirate ship. 
 
 To make our visualization more appealing, we will extend the image width from 768 to 1200. 
 
@@ -209,14 +208,18 @@ To make our visualization more appealing, we will extend the image width from 76
 
 #### Latent Noise Configuration
 
-:seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 1200, ```images per prompt```: 4
+:seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 1200, ```images per prompt```: 1
 
 https://user-images.githubusercontent.com/63591221/228901991-aa6ccd79-c82b-4956-8b5e-ca1234a667ac.mp4
+
+:information_source: The visualization above depicts the random walk from an initial point in 3 random directions for 50 steps. Each time one such direction has been explored for 50 steps, the visualization walks all the way back to the initial image to explore a new direction.
 
 :information_source: The results of this experiment are not in this repository due to their size.
 
 ### 4. Interpolation
-In this tutorial we will use the [```interpolation.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/interpolation.yaml) configuration file for ```txt2img```. We will create a visualization by interpolating text embeddings and latent noise tensors, which are loaded from a pre-defined list. The list contains 8 prompts and 8 latent noise entries. Besides listing raw text prompts and random seeds, one can directly reference an embeddings file from a previous expeeriment. When doing so for latent noise tensors, it is important to take care that the image resolution matches for all items of the inter_noises parameter (random seed entries will use the heigh and width parameters, which are defined below).
+In this tutorial we will use the [```interpolation.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/interpolation.yaml) configuration file for ```txt2img```. We will create a visualization by interpolating text embeddings and latent noise tensors, which are loaded from a pre-defined list. The list contains 8 prompts and 8 latent noise entries. 
+
+:information_source: Besides listing raw text prompts and random seeds, one can directly reference an embeddings file from a previous experiment. When doing so for latent noise tensors, it is important to take care that the image resolution matches for all items of the ```inter_noises``` parameter (random seed entries will use the heigth and width parameters, which are defined at the bottom of the config file).
 
 As the second entry of the ```inter_prompts``` and ```inter_noises``` lists, we will link to the embeddings of the initial image from the previous tutorial depicting a painting of a pirate ship. Since the loaded latent noise embeddings are configured for 700x1200 image resolution, we will have to set this as the base resolution for the experiment.
 
@@ -230,12 +233,15 @@ As the second entry of the ```inter_prompts``` and ```inter_noises``` lists, we 
  - *"A photograph of a dog with a funny hat"*
  - *"./experiments/2023-03-30_19-53-28_txt2img_random-walk/embeddings/output-0_direction-0_randwalkstep-start.pt"*
  - *"A digital illustration of a steampunk library with clockwork machines, 4k, detailed, trending on artstation, fantasy vivid colors"*
- - A beautiful castle beside a waterfall in the woods, by Josef Thoma, matte painting, trending on artstation HQ|
- - A digital illustration of a medieval town, 4k, detailed, trending on artstation, fantasy|low quality, low detail
- - A Hyperrealistic photograph of ancient Paris architectural ruins in a flooded apocalypse landscape of dead skyscrapers, eiffel tower, lens flares, 
- - A Hyperrealistic photograph of a landscape with ancient human ruins, lens flares,
- - A Hyperrealistic photograph of a futuristic city with cyberpunk skyscrapers, lens flares, 
+ - *"A beautiful castle beside a waterfall in the woods, by Josef Thoma, matte painting, trending on artstation HQ"*
+ - *"A digital illustration of a medieval town, 4k, detailed, trending on artstation, fantasy"*
+ - *"A Hyperrealistic photograph of ancient Paris architectural ruins in a flooded apocalypse landscape of dead skyscrapers, eiffel tower, ```*```"*
+ - *"A Hyperrealistic photograph of a landscape with ancient human ruins ```*```"*
+ - *"A Hyperrealistic photograph of a futuristic city with cyberpunk skyscrapers ```*```"*
+ 
+:information_source: ```*``` means that the prompt is longer in the config file.
 
+:information_source: negative prompts have been omitted from this overview but can be found in the config file.
 
 #### Latent Noise Configurations
 
