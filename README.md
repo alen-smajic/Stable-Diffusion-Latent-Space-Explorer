@@ -1,5 +1,7 @@
 # Stable-Diffusion-Latent-Space-Explorer
 
+<img src="resources/images_for_readme/readme_banner.gif" alt="Image 1" width="100%">
+
 ## General Information
 <img align="right" width="300" height="" src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Logo-Goethe-University-Frankfurt-am-Main.svg">
 
