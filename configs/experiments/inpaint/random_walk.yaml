@@ -35,10 +35,10 @@ walk_directions: 3  # Specifies the amount of latent space directions to be expl
 prompt: An astronaut riding a horse on the moon.|black and white, blurry, painting, drawing, low resolution, watermark  # Input prompt where the positive part is separated from the negative part by a vertical line "|" without any whitespace in between.
 load_prompt_embeds: ./experiments/2023-03-27_21-46-30_inpaint_single-inference/embeddings/output-1_diffstep-25.pt  # Path to a local file containing the prompt embeddings. Caution the parameter "prompt" does not apply, if a pre-generated prompt embedding is loaded from a file.
 # LATENT NOISE, IMAGE & MASK CONFIGURATION
-rand_seed: 0  # Random seed for sampling reproducible latent noise that is added to the input image for inpainting.
+rand_seed: 0  # Random seed for sampling reproducible latent noise that is added to the input image for inpainting and for sampling the encoded latents of the input image from the VAE..
 height: 768  # Image height of the desired VAE output (used for resizing the input image and for computing the latent noise height).
 width: 768  # Image width of the desired VAE output (used for resizing the input image and for computing the latent noise width).
 images_per_prompt: 1  # Amount of images to generate per prompt (specifies the batch dimension of the latent noise).
-load_latent_noise: ./experiments/2023-03-27_21-46-30_inpaint_single-inference/embeddings/output-1_diffstep-25.pt  # Path to a local file containing the latent noise tensor. Caution the parameters "rand_seed", "height", "width" and "images_per_prompt" do not apply, if a pre-generated latent noise tensor is loaded from a file.
+load_latent_noise: ./experiments/2023-03-27_21-46-30_inpaint_single-inference/embeddings/output-1_diffstep-25.pt  # Path to a local file containing the latent noise tensor. Caution the parameters "height", "width" and "images_per_prompt" do not apply, if a pre-generated latent noise tensor is loaded from a file.
 image: ./experiments/2023-03-27_21-40-35_img2img_single-inference/images/output-0_diffstep-25.png  # Path to a local image file.
 mask: ./resources/astronaut_mask.png  # Path to a local mask image.

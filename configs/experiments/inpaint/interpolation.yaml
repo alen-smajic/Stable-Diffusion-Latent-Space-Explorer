@@ -24,7 +24,7 @@ guidance_scale: 9.5  # Guidance scale factor for classifier free guidance (highe
 
 # EXPERIMENT CONFIGURATIONS
 # Specifies the experiment configurations.
-output_path: /data/alen_smajic/FP_KI_Stable_Diffusion/experiments  # Path for storing the experiment results (a new folder will be placed at the specified location).
+output_path: ./experiments  # Path for storing the experiment results (a new folder will be placed at the specified location).
 gif_frame_dur: 100  # Specifies the frame duration in milliseconds for the produced gifs.
 interpolation_steps: 30  # Specifies the amount of interpolation steps to perform.
 interpolation_method: slerp  # Specifies the interpolation method (can be either "lerp" for linear interpolation or "slerp" for spherical linear interpolation).
