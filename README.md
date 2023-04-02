@@ -216,7 +216,7 @@ https://user-images.githubusercontent.com/63591221/228901991-aa6ccd79-c82b-4956-
 
 :information_source: The visualization above depicts the random walk from an initial point in 3 random directions for 50 steps. Each time one such direction has been explored for 50 steps, the visualization walks all the way back to the initial image to explore a new direction.
 
-:information_source: The results of this experiment are not in this repository due to their size.
+:information_source: The results of this experiment are not in this repository due to their size. Only the initial image is included for the sake of reproducibility of the next tutorial.
 
 ### 4. Interpolation
 In this tutorial we will use the [```interpolation.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/txt2img/interpolation.yaml) configuration file for ```txt2img```. We will create a visualization by interpolating text embeddings and latent noise tensors, which are loaded from a pre-defined list. The list contains 8 prompts and 8 latent noise entries. 
