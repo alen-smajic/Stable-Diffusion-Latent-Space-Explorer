@@ -121,7 +121,10 @@ We will start by configuring ```txt2img``` to generate 4 images that adhere to a
 
 :seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 768, ```images per prompt```: 4
 
-<img width="" height="" src="resources/images_for_readme/txt2img_single_inference.png">
+| Results |
+| --- |
+| ![Image 1](resources/images_for_readme/txt2img_single_inference.png) |
+
 :information_source: Note that your results may differ from the ones presented here, even with identical configurations and random seeds. 
 
 You can find [here](https://huggingface.co/docs/diffusers/using-diffusers/reproducibility) more information on reproducibility.
@@ -143,7 +146,9 @@ depict an astronaut riding a donkey on the moon (you can find the configuration 
 
 :mechanical_arm: ```strength```: 0.8
 
-<img width="" height="" src="resources/images_for_readme/img2img_single_inference.png">
+| Results |
+| --- |
+| ![Image 1](resources/images_for_readme/img2img_single_inference.png) |
 
  :information_source: Note that the strength parameter scales the specified amount of diffusion steps. Even though we specified 25 diffusion steps in the config file, in actuality Stable Diffusion will start from from diffusion step 5.
 
@@ -163,7 +168,13 @@ Finally, we use ```inpaint``` to generate 4 variations of the image ```output-0_
 
 :black_square_button: ```mask```: *"./resources/astronaut_mask.png"*
 
-<img width="" height="" src="./resources/images_for_readme/inpaint_single_inference.png">
+| Input image | Mask |
+| --- | --- |
+| ![Image 1](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/experiments/2023-03-27_21-40-35_img2img_single-inference/images/output-0_diffstep-25.png) | ![Image 2](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/astronaut_mask.png) | 
+
+| Results |
+| --- |
+| ![Image 1](./resources/images_for_readme/inpaint_single_inference.png) |
 
 ### 2. Visualize Diffusion
 In this tutorial we will use the [```visualize_diffusion.yaml```](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/visualize_diffusion.yaml) configuration file for ```inpaint```. This experiment decodes the latent noise tensor after each diffusion step and creates a visualization of the whole diffusion process.
@@ -186,10 +197,9 @@ We can easily reuse textual embeddings and latent noise tensors to recreate imag
 
 :black_square_button: ```mask```: *"./resources/astronaut_mask.png"*
 
-<div style="display: flex;">
-  <img src="resources/images_for_readme/inpaint_visualize_diffusion.gif" alt="Image 1" width="47%">
-  <img src="resources/images_for_readme/inpaint_visualize_diffusion_grid.png" alt="Image 2" width="52%">
-</div>
+| GIF | Results |
+| --- | --- |
+| ![Image 1](resources/images_for_readme/inpaint_visualize_diffusion.gif) | ![Image 2](resources/images_for_readme/inpaint_visualize_diffusion_grid.png) | 
 
 :information_source: The results of this experiment are not in this repository due to their size.
 
@@ -254,9 +264,9 @@ https://user-images.githubusercontent.com/63591221/229148028-0a951529-4555-4750-
 :information_source: The results of this experiment are not in this repository due to their size.
 
 ### 5. Diffevolution
-This method was first described by [@MaxRobinsonTheGreat](https://github.com/MaxRobinsonTheGreat) in [this repository](https://github.com/MaxRobinsonTheGreat/StableDiffEvolution). It is an evolutionary algorithm that allows the user to select the most dominant "gene" for the next batch of images that are being generated. The "genes" are represented by the textual embeddings and latent noise. There is no particular fitness function, as is usually the case with evolutionary algorithms. Instead, the user can pick the image he most likes or even redraw the batch if none of the produced images are preferred.
+This method was first described by [@MaxRobinsonTheGreat](https://github.com/MaxRobinsonTheGreat) in [this repository](https://github.com/MaxRobinsonTheGreat/StableDiffEvolution). It is an evolutionary algorithm that allows the user to select the most dominant "gene" for the next batch of images that are being generated. The "genes" are represented by the textual embeddings and latent noise. There is no particular fitness function, as is usually the case with evolutionary algorithms. Instead, the user can choose the most preferred image or even redraw the batch if none of the produced images are preferred.
 
-In this tutorial we will use the [diffevolution.yaml](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/diffevolution.yaml) configuration file for ```inpaint``` to transform a tiny spider from a given input image into an alien-like creature. 
+In this tutorial we will use the [diffevolution.yaml](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/diffevolution.yaml) configuration file for ```inpaint``` to transform an [image of a tiny spider](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/tiny_spider.png) into an alien-like creature using [this mask](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/tiny_spider_mask.png). We will perform two experiments. For the first we will actively select the most preferred images over several generations, while for the second experiment we will leave the diffevolution process to randomly select the most dominant genes for 50 generations. 
 
 #### Experiment Configurations
 :dna: ```genes_per_generation```: 5, ```step_size```: 0.025
@@ -271,7 +281,20 @@ In this tutorial we will use the [diffevolution.yaml](https://github.com/alen-sm
 
 :black_square_button: ```mask```: *"./resources/tiny_spider_mask.png"*
 
-![output-0](https://user-images.githubusercontent.com/63591221/233740746-c817598e-e6b7-413d-9b87-e9f01900fa62.gif)
+| Image from the internet | Mask | Initial image producey by Stable Diffusion |
+| --- | --- | --- |
+| ![Image 1](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/tiny_spider.png) | ![Image 2](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/tiny_spider_mask.png) | ![Image 3](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/experiments/2023-04-21_15-36-26_inpaint_diffevolution/images/difevostep-start.png) | 
+
+| Result of 1st experiment |
+| --- |
+| ![Image 1](https://user-images.githubusercontent.com/63591221/233740746-c817598e-e6b7-413d-9b87-e9f01900fa62.gif) |
+
+:information_source: The results of this experiment are not in this repository due to their size.
+
+This animation was made by manually selecting the most dominant genes over 21 generations. For the next experiment we will automate the gene selection for 50 generations to explore an alternative evolutionary path starting from the same initial image.
+
+| Result of 2nd experiment |
+| --- |
 
 https://user-images.githubusercontent.com/63591221/233772017-191761ff-0038-468c-bfbd-46a7c5a7304b.mp4
 
