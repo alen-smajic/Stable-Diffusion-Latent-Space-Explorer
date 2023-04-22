@@ -268,6 +268,8 @@ This method was first described by [@MaxRobinsonTheGreat](https://github.com/Max
 
 In this tutorial we will use the [diffevolution.yaml](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/diffevolution.yaml) configuration file for ```inpaint``` to transform an [image of a tiny spider](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/tiny_spider.png) into an alien-like creature using [this mask](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/tiny_spider_mask.png). We will perform two experiments. For the first we will actively select the most preferred images over several generations, while for the second experiment we will leave the diffevolution process to randomly select the most dominant genes for 50 generations. 
 
+:information_source: Besides being able to select the most dominant gene, the user can also specify a new prompt to further guide the diffevolution process in a new direction. This option isn't explored in this tutorial, but feel free to try it out.
+
 #### Experiment Configurations
 :dna: ```genes_per_generation```: 5, ```step_size```: 0.025
 
