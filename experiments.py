@@ -333,15 +333,22 @@ def run_interpolation(cfg_path, exp_cfg, sd_model):
 
 
 def run_diffevolution(cfg_path, exp_cfg, sd_model):
+    """
+    Runs a diffevolution experiment for the given Stable Diffusion model.
+
+    :param cfg_path: Path to the experiment configuration file.
+    :param exp_cfg: Dictionary containing the experiment configuration.
+    :param sd_model: The Stable Diffusion model instance.
+    """
     # Creates the output folder for storing the experiment results
     output_path = utils.generate_output_folder(
         exp_cfg["model_identifier"],
         exp_cfg["exp_identifier"],
         cfg_path,
-        exp_cfg["output_path"],
-        gifs=False
+        exp_cfg["output_path"]
     )
 
+    print("Creating initial latents..")
     # Loads the initial inputs for Stable Diffusion (prompt embedding and latent noise)
     prompt_embed = sd_model.load_prompt(exp_cfg["load_prompt_embeds"], exp_cfg["prompt"])
     latent_noise = sd_model.load_noise(
@@ -361,7 +368,6 @@ def run_diffevolution(cfg_path, exp_cfg, sd_model):
         image = Image.open(exp_cfg["image"]).convert("RGB")
         mask = Image.open(exp_cfg["mask"]).convert("RGB")
 
-    print("Creating initial latents..")
     # Runs the inference process for Stable Diffusion
     image_embeds, images = sd_model.run_sd_inference(prompt_embed, latent_noise, image, mask)
     # Stores the generated initial image and latents
@@ -371,60 +377,111 @@ def run_diffevolution(cfg_path, exp_cfg, sd_model):
         latent_noise=latent_noise[0].unsqueeze(0).cpu(),
         image_embed=image_embeds[0][-1].cpu(),
         image=images[0][-1],
-        file_name=f"difevolstep-0"
+        file_name=f"difevostep-start"
     )
 
-    step = 1  # Tracks the amount of diffevolution steps
-    choice = 0  # Tracks the index of the most dominant gene
+    results = [images[0][-1]]  # Used for storing the gif frames
+    step = 1  # Tracks the current diffevolution step
+    dom_gene_idx = "start"  # Tracks the index of the most dominant gene
+    distant_prompt = prompt_embed  # Used for storing the prompt embeddings of modified prompts
+    steps_to_skip = 0  # Used for tracking the amount of diffevolution steps for skipping the user input window
     while True:  # Performs diffevolution
         print(f"Diffevolution step: {step}")
 
         # Stacks the latents
         latent_noise = latent_noise.repeat(latent_noise.shape[0], 1, 1, 1)
 
-        # Samples several latent noise tensor as new genes
-        distant = sd_model.load_noise(
-            "None",
-            exp_cfg["height"],
-            exp_cfg["width"],
-            exp_cfg["genes_per_generation"],
-            random.randint(0, 10**6)
+        # Samples several latent noise tensors as new genes
+        distant_noise = sd_model.load_noise(
+            load_latent_noise="None",
+            height=exp_cfg["height"],
+            width=exp_cfg["width"],
+            images_per_prompt=exp_cfg["genes_per_generation"],
+            rand_seed=random.randint(0, 10**6)
         )
 
-        # Transfers some of the new latent code features to the current latent noise
+        # Transfers some of the new latent code and prompt features to the current latent noise and prompt embeddings
         new_gen_latents = utils.slerp(
             latent_noise,
-            distant,
-            exp_cfg["step_size"],
+            distant_noise,
+            exp_cfg["step_size"]
+        )
+        new_gen_prompt = utils.slerp(
+            prompt_embed,
+            distant_prompt,
+            exp_cfg["step_size"]
         )
 
         # Runs the inference process for Stable Diffusion
-        image_embeds, images = sd_model.run_sd_inference(prompt_embed, new_gen_latents, image, mask)
+        image_embeds, images = sd_model.run_sd_inference(new_gen_prompt, new_gen_latents, image, mask)
 
         # Stores the experiment results
         for batch_idx in range(len(images)):
             utils.save_sd_results(
                 output_path=output_path,
-                prompt_emb=prompt_embed.cpu(),
+                prompt_emb=new_gen_prompt.cpu(),
                 latent_noise=new_gen_latents[batch_idx].unsqueeze(0).cpu(),
                 image_embed=image_embeds[batch_idx][-1].cpu(),
                 image=images[batch_idx][-1],
-                file_name=f"difevolstep-{step}_parent-{choice}_gene-{batch_idx}"
+                file_name=f"difevostep-{step}_parent-{dom_gene_idx}_gene-{batch_idx}"
             )
 
-        user_input = input(f"Enter stop and press enter to stop diffevolution.\n"
-                           f"Choose the dominant gene (0-{exp_cfg['genes_per_generation']}) or "
-                       f"leave empty for a re-roll and press enter:  ")
-        print("")
-        if not user_input.isnumeric():
-            print("re-rolling..\n")
-            latent_noise = latent_noise[0].unsqueeze(0)
-            continue
-        elif user_input == "exit":
-            break
-        else:
-            choice = user_input
-            latent_noise = new_gen_latents[int(choice)].unsqueeze(0)
-            step += 1
+        while True:
+            if steps_to_skip == 0:
+                print(" * ACTION REQUIRED * ")
+                print("-> Type exit and press enter to stop the experiment.")
+                print("")
+                print("-> Press enter (without any input) to re-roll the current generation with the same parameters.")
+                print("")
+                print("-> Otherwise, please specify a valid action.")
+                print("       Valid actions have the form: {int_1};{int_2};{prmpt}")
+                print("       {int_1} is the index of the most dominant gene from the current generation.")
+                print(f"       Specify a number between 0 and {exp_cfg['genes_per_generation']}.")
+                print("       {int_2} is optional and can be used to specify the amount of steps that should perform "
+                      "automatically (skips this input window for that amount of steps and randomly chooses genes).")
+                print("       {prmpt} is optional and can be used to specify a new prompt that should further guide the "
+                      "diffevolution process (use | to separate the positive and negative part of the prompt).")
+                print("")
+                print("Example input: 2;;")
+                print("Selects the gene-2 image of the current generation. The other two parameters remain unspecified.")
+                print("")
+                user_action = input("Input: ")
+                print("")
+            else:
+                steps_to_skip -= 1
+                user_action = False
+                break
 
-    print("Experiment finished")
+            if user_action == "exit" or user_action == "Exit":
+                print("\nGenerating the final gif..")
+                # Produces a gif to visualize the diffevolution process
+                utils.produce_gif([results], output_path, exp_cfg["gif_frame_dur"])
+                print("Experiment finished")
+                exit()
+
+            if user_action == "" or user_action.count(";") == 2:
+                break
+            else:
+                print("\nIt seems like your input could not be recognized. Please specify a valid input.\n")
+                continue
+
+        if user_action == "":
+            print("\nRe-rolling the current generation")
+            continue  # Re-rolls the current generation
+        elif user_action is False:
+            user_action = f"{random.randint(0, exp_cfg['genes_per_generation']-1)};;"
+
+        user_actions = user_action.split(";")
+        if user_actions[0].isnumeric():
+            # Loads the most dominant gene
+            dom_gene_idx = int(user_actions[0])
+            latent_noise = new_gen_latents[dom_gene_idx].unsqueeze(0)
+            results.append(images[dom_gene_idx][-1])
+            prompt_embed = new_gen_prompt
+            step += 1
+        if user_actions[1].isnumeric():
+            # Loads the amount of steps to skip the user input window
+            steps_to_skip = int(user_actions[1])
+        if "|" in user_actions[2]:
+            # Loads the new prompt
+            distant_prompt = sd_model.load_prompt(load_prompt_embeds="None", prompt=user_actions[2])
