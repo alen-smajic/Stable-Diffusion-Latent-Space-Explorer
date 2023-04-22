@@ -69,6 +69,7 @@ Below is a list of experiments that are currently supported. Each entry is linke
 3. [Random Walk](#3-random-walk)
 4. [Interpolation](#4-interpolation)
 5. [Diffevolution](#5-diffevolution)
+6. [Outpaint Walk](#6-outpaint-walk)
 
 ### How to run an experiment
 In order to run an experiment, you first need to define the experiment parameters using one of the experiment configuration files. Once this is done, you can run an experiment by calling the following script:
@@ -301,3 +302,6 @@ This animation was made by manually selecting the most dominant genes over 21 ge
 https://user-images.githubusercontent.com/63591221/233772017-191761ff-0038-468c-bfbd-46a7c5a7304b.mp4
 
 :information_source: The results of this experiment are not in this repository due to their size.
+
+### 6. Outpaint Walk
+:construction: Work in progress.. :building_construction: 
