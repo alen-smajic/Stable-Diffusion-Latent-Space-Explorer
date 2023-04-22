@@ -254,4 +254,25 @@ https://user-images.githubusercontent.com/63591221/229148028-0a951529-4555-4750-
 :information_source: The results of this experiment are not in this repository due to their size.
 
 ### 5. Diffevolution
-:construction: Work in progress..
+This method was first described by [@MaxRobinsonTheGreat](https://github.com/MaxRobinsonTheGreat) in [this repository](https://github.com/MaxRobinsonTheGreat/StableDiffEvolution). It is an evolutionary algorithm that allows the user to select the most dominant "gene" for the next batch of images that are being generated. The "genes" are represented by the textual embeddings and latent noise. There is no particular fitness function, as is usually the case with evolutionary algorithms. Instead, the user can pick the image he most likes or even redraw the batch if none of the produced images are preferred.
+
+In this tutorial we will use the [diffevolution.yaml](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/diffevolution.yaml) configuration file for ```inpaint``` to transform a tiny spider from a given input image into an alien-like creature. 
+
+#### Experiment Configurations
+:dna: ```genes_per_generation```: 5, ```step_size```: 0.025
+
+#### Prompt Configurations
+:keyboard: ```prompt:``` *"A highly detailed alien spider with multiple legs, HD, HQ, 4k, 8k."*, ```negative prompt:``` *"black and white, blurry, painting, drawing, low resolution, watermark"*
+
+#### Latent Noise Configuration
+:seedling: ```rand_seed```: 0, ```height```: 768, ```width```: 768
+
+:framed_picture: ```image```: *"./resources/tin_spider.png"* 
+
+:black_square_button: ```mask```: *"./resources/tiny_spider_mask.png"*
+
+![output-0](https://user-images.githubusercontent.com/63591221/233740746-c817598e-e6b7-413d-9b87-e9f01900fa62.gif)
+
+https://user-images.githubusercontent.com/63591221/233772017-191761ff-0038-468c-bfbd-46a7c5a7304b.mp4
+
+:information_source: The results of this experiment are not in this repository due to their size.
