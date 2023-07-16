@@ -42,6 +42,8 @@ def run_sd_experiment(cfg_path, exp_cfg, sd_model):
         experiments.run_interpolation(cfg_path, exp_cfg, sd_model)
     elif exp_cfg["exp_identifier"] == "diffevolution":
         experiments.run_diffevolution(cfg_path, exp_cfg, sd_model)
+    elif exp_cfg["exp_identifier"] == "outpaint-walk":
+        experiments.run_outpaint_walk(cfg_path, exp_cfg, sd_model)
 
 
 def main():

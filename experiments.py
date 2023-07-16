@@ -1,5 +1,6 @@
 import random
 
+import numpy as np
 from PIL import Image
 import torch
 
@@ -485,3 +486,174 @@ def run_diffevolution(cfg_path, exp_cfg, sd_model):
         if "|" in user_actions[2]:
             # Loads the new prompt
             distant_prompt = sd_model.load_prompt(load_prompt_embeds="None", prompt=user_actions[2])
+
+
+def run_outpaint_walk(cfg_path, exp_cfg, sd_model):
+    """
+    Runs an outpaint walk experiment for the given Stable Diffusion model.
+
+    :param cfg_path: Path to the experiment configuration file.
+    :param exp_cfg: Dictionary containing the experiment configuration.
+    :param sd_model: The Stable Diffusion model instance.
+    """
+    # Creates the output folder for storing the experiment results
+    output_path = utils.generate_output_folder(
+        exp_cfg["model_identifier"],
+        exp_cfg["exp_identifier"],
+        cfg_path,
+        exp_cfg["output_path"]
+    )
+
+    # Loads the initial image
+    curr_img = Image.open(exp_cfg["image"]).convert("RGB")
+    curr_img = curr_img.resize((exp_cfg["width"], exp_cfg["height"]))
+    curr_img.save(f"{output_path}/images/init.png")
+
+    # Loads and encodes all prompts
+    prompt_embeds = []
+    for prmpt in exp_cfg["prompts"]:
+        prompt_embeds.append(sd_model.load_prompt(prmpt, prmpt))
+
+    # Used for tracking the current prompt and camera action
+    curr_prmpt = prompt_embeds[0]
+    curr_prmpt_idx = 0
+    curr_act = exp_cfg["camera_actions"][0]
+    curr_act_idx = 0
+
+    # Cumulative sum of the frames per prompt and per camera action
+    prmpt_frames_cumsum = [sum(exp_cfg["frames_per_prompt"][:i+1]) for i in range(len(exp_cfg["frames_per_prompt"]))]
+    act_frames_cumsum = [sum(exp_cfg["frames_per_cam_action"][:i+1]) for i in range(len(exp_cfg["frames_per_cam_action"]))]
+
+    frames = [curr_img]  # Stores the frames for the final gif
+    for i in range(prmpt_frames_cumsum[-1]):
+        # Checks whether to update the prompt embeddings
+        if curr_prmpt_idx+1 < len(prompt_embeds):
+            if i == prmpt_frames_cumsum[curr_prmpt_idx]:
+                curr_prmpt_idx += 1
+                curr_prmpt = prompt_embeds[curr_prmpt_idx]
+
+        # Checks whether to update the camera action
+        if curr_act_idx+1 < len(exp_cfg["camera_actions"]):
+            if i == act_frames_cumsum[curr_act_idx]:
+                curr_act_idx += 1
+                curr_act = exp_cfg["camera_actions"][curr_act_idx]
+
+        # Samples random noise
+        latent_noise = sd_model.load_noise(
+            "",
+            exp_cfg["height"],
+            exp_cfg["width"],
+            1,
+            exp_cfg["seed_per_frame"][i] if i < len(exp_cfg["seed_per_frame"]) else i
+        )
+
+        margin_height = int(exp_cfg["height"] * exp_cfg["translation_factor"]) // exp_cfg["num_filler_frames"] * exp_cfg["num_filler_frames"]
+        margin_width = int(exp_cfg["width"] * exp_cfg["translation_factor"]) // exp_cfg["num_filler_frames"] * exp_cfg["num_filler_frames"]
+        mask_img = np.ones((exp_cfg["height"], exp_cfg["width"])) * 255
+
+        prev_img = curr_img  # Used to produce filler frames between the previous and current frame
+        if curr_act == "up":
+            mask_img[margin_height:, :] = 0
+            mask_image = Image.fromarray(np.uint8(mask_img)).convert('RGB')
+            in_img = curr_img.transform(
+                (exp_cfg["width"], exp_cfg["height"]),
+                Image.AFFINE,
+                (1, 0, 0, 0, 1, -margin_height),
+                resample=Image.BICUBIC
+            )
+        elif curr_act == "down":
+            mask_img[:-margin_height, :] = 0
+            mask_image = Image.fromarray(np.uint8(mask_img)).convert('RGB')
+            in_img = curr_img.transform(
+                (exp_cfg["width"], exp_cfg["height"]),
+                Image.AFFINE,
+                (1, 0, 0, 0, 1, margin_height),
+                resample=Image.BICUBIC
+            )
+        elif curr_act == "right":
+            mask_img[:, :-margin_width] = 0
+            mask_image = Image.fromarray(np.uint8(mask_img)).convert('RGB')
+            in_img = curr_img.transform(
+                (exp_cfg["width"], exp_cfg["height"]),
+                Image.AFFINE,
+                (1, 0, margin_width, 0, 1, 0),
+                resample=Image.BICUBIC
+            )
+        elif curr_act == "left":
+            mask_img[:, margin_width:] = 0
+            mask_image = Image.fromarray(np.uint8(mask_img)).convert('RGB')
+            in_img = curr_img.transform(
+                (exp_cfg["width"], exp_cfg["height"]),
+                Image.AFFINE,
+                (1, 0, -margin_width, 0, 1, 0),
+                resample=Image.BICUBIC
+            )
+        elif curr_act == "backwards":
+            mask_img[margin_height//2:-margin_height//2, margin_width//2:-margin_width//2] = 0
+            mask_image = Image.fromarray(np.uint8(mask_img)).convert('RGB')
+            downsized_img = curr_img.resize((exp_cfg["width"] - margin_width, exp_cfg["height"] - margin_height))
+            in_img = Image.new(downsized_img.mode, (exp_cfg["width"], exp_cfg["height"]), (0, 0, 0))
+            in_img.paste(downsized_img, (margin_width//2, margin_height//2))
+
+        # Runs the inference process for Stable Diffusion
+        image_embeds, images = sd_model.run_sd_inference(curr_prmpt, latent_noise, in_img, mask_image)
+
+        if curr_act != "backwards":
+            in_img.paste(images[0][-1], mask=mask_image.convert('L'))
+            curr_img = in_img
+        else:
+            curr_img = images[0][-1]
+
+        # Stores the experiment results
+        utils.save_sd_results(
+            output_path=output_path,
+            prompt_emb=curr_prmpt.cpu(),
+            latent_noise=latent_noise[0].unsqueeze(0).cpu(),
+            image_embed=image_embeds[0][-1].cpu(),
+            image=curr_img,
+            file_name=f"frame-{i}"
+        )
+
+        # Produces filler frames between the previous and the current frame 
+        for fill_frame_idx in range(1, exp_cfg["num_filler_frames"]):
+            add_h = margin_height // exp_cfg["num_filler_frames"] * fill_frame_idx
+            add_w = margin_width // exp_cfg["num_filler_frames"] * fill_frame_idx
+            filler_frame = Image.new("RGB", (exp_cfg["width"], exp_cfg["height"]), (0, 0, 0))
+
+            if curr_act == "up":
+                prev_frame = prev_img.crop((0, 0, exp_cfg["width"], exp_cfg["height"] - add_h))
+                curr_frame = curr_img.crop((0, margin_height - add_h, exp_cfg["width"], margin_height))
+                filler_frame.paste(curr_frame, (0, 0))
+                filler_frame.paste(prev_frame, (0, curr_frame.height))
+            elif curr_act == "down":
+                prev_frame = prev_img.crop((0, add_h, exp_cfg["width"], exp_cfg["height"]))
+                curr_frame = curr_img.crop((0, exp_cfg["height"] - margin_height, exp_cfg["width"], exp_cfg["height"] - margin_height + add_h))
+                filler_frame.paste(prev_frame, (0, 0))
+                filler_frame.paste(curr_frame, (0, prev_frame.height))
+            elif curr_act == "right":
+                prev_frame = prev_img.crop((add_w, 0, exp_cfg["width"], exp_cfg["height"]))
+                curr_frame = curr_img.crop((exp_cfg["width"] - margin_width, 0, exp_cfg["width"] - margin_width + add_w, exp_cfg["height"]))
+                filler_frame.paste(prev_frame, (0, 0))
+                filler_frame.paste(curr_frame, (prev_frame.width, 0))
+            elif curr_act == "left":
+                prev_frame = prev_img.crop((0, 0, exp_cfg["width"]-add_w, exp_cfg["height"]))
+                curr_frame = curr_img.crop((margin_width-add_w, 0, margin_width, exp_cfg["height"]))
+                filler_frame.paste(curr_frame, (0, 0))
+                filler_frame.paste(prev_frame, (curr_frame.width, 0))
+            elif curr_act == "backwards":
+                filler_frame = curr_img.crop(
+                    (margin_width//2-add_w//2,
+                    margin_height//2-add_h//2,
+                    exp_cfg["width"]-margin_width//2+add_w//2,
+                    exp_cfg["height"]-margin_height//2+add_h//2)
+                )
+                filler_frame = filler_frame.resize((exp_cfg["width"], exp_cfg["height"]))
+            else:
+                continue
+            filler_frame.save(f"{output_path}/images/{i}_filler_frame_{fill_frame_idx}.png")
+            frames.append(filler_frame)
+        frames.append(curr_img)
+
+    # Produces a gif to visualize the outpaint walk
+    utils.produce_gif([frames], output_path, exp_cfg["gif_frame_dur"])
+    print("Experiment finished")
