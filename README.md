@@ -304,4 +304,54 @@ https://user-images.githubusercontent.com/63591221/233772017-191761ff-0038-468c-
 :information_source: The results of this experiment are not in this repository due to their size.
 
 ### 6. Outpaint Walk
-:construction: Work in progress.. :building_construction: 
+This method starts with an initial image and produces a video by outpainting the area outside the initial image. It is highly customizable and offers custom camera movement options. In this tutorial we will use the [outpaint_walk.yaml](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/configs/experiments/inpaint/outpaint_walk.yaml) configuration file for ```inpaint``` to extend the content of Vincent van Gogh's [The Starry Night painting](https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/blob/main/resources/the_starry_night.png) into a beautiful visual animation. 
+
+The outpaint walk will produce a set of keyframes. The ```translation_factor``` controls the translation between two keyframes, while the ```num_filler_frames``` parameter is used to specify the amount of filler frames that will be inserted in-between, so that the animation appears smoother. A list of prompts and the corresponding frame duration for each prompt can be specified. In order to control the camera walk, one can select between 5 available options including: ```right, down, left, up, backwards```. In analogy to the prompts, for each camera action in the list there should be a frame duration specified. Make sure that the total amount of frames is equal between the ```frames_per_prompt``` and ```frames_per_cam_action``` parameters and that the individual lengths of both lists are equal to the list of ```prompts``` and ```camera_actions```, respectively.
+
+#### Experiment Configurations
+
+ :signal_strength: ```translation_factor```: 0.4, :clapper: ```num_filler_frames```: 64
+
+ #### Prompt Configurations
+
+:keyboard: ```prompts```: 
+ - *"A beautiful landscape in the style of the starry night, Vincent van Gogh, painting.|watermark, text"*
+ - *"A beautiful village landscape with a river in the style of the starry night, Vincent van Gogh, painting.|watermark, text"*
+ - *"A beautiful japanese landscape in the style of the starry night, Vincent van Gogh, painting.|watermark, text"*
+ - *"A dense forrest in the style of the starry night, Vincent van Gogh, painting.|watermark, text"*
+ - *"Paintings on a wall of a museum.|watermark, text"*
+
+ :cinema: ```frames_per_prompt```: 
+ - 3
+ - 3
+ - 3
+ - 3
+ - 3
+
+  #### CAMERA CONFIGURATION
+
+ :movie_camera: ```camera_actions```: 
+ - right
+ - down
+ - left
+ - up
+ - backwards
+
+ :cinema: ```frames_per_cam_action```: 
+ - 3
+ - 3
+ - 3
+ - 3
+ - 3
+
+ #### Latent Noise Configuration
+
+:seedling: ```seed_per_frame```: 100, ```rand_seed```: 0, ```height```: 512, ```width```: 648
+
+:information_source: Under ```seed_per_frame``` you can specify a list of seeds that will be used for each frame. Since such a list can get quite long for longer videos, you can also specify just an initial seed (like in this example) and the algorithm will do the rest for you :)
+
+https://github.com/alen-smajic/Stable-Diffusion-Latent-Space-Explorer/assets/63591221/ec48eefb-a572-409b-8bfe-ffaa8f2b519c
+
+:information_source: The video is playing with double speed.
+
+:information_source: The results of this experiment are not in this repository due to their size.
